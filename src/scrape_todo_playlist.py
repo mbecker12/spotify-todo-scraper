@@ -1,7 +1,4 @@
-import logging
-import os
 import sys
-from unittest import result
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -14,7 +11,6 @@ from util import (
     handle_songs,
     login_to_spotify,
     prepare_personal_songs,
-    setup_credentials,
 )
 
 

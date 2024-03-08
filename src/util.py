@@ -3,7 +3,6 @@ import datetime
 import logging
 import os
 import random
-import sys
 from typing import Dict, List, Union
 
 import requests
@@ -15,19 +14,20 @@ from spotify_objects import SpotifyCredentials, SpotifyPlaylist, SpotifyTrack
 
 
 def setup_credentials(cred_file=".spotipy-cred.yml") -> SpotifyCredentials:
-    if (
-        os.environ.get("SPOTIPY_CLIENT_ID")
-        and os.environ.get("SPOTIPY_CLIENT_SECRET")
-        and os.environ.get("SPOTIPY_REDIRECT_URI")
-        and os.environ.get("SPOTIPY_REFRESH_TOKEN")
-    ):
-        creds = SpotifyCredentials(
-            client_id=os.environ.get("SPOTIPY_CLIENT_ID"),
-            client_secret=os.environ.get("SPOTIPY_CLIENT_SECRET"),
-            redirect_uri=os.environ.get("SPOTIPY_REDIRECT_URI"),
-            refresh_token=os.environ.get("SPOTIPY_REFRESH_TOKEN"),
-        )
+    creds = SpotifyCredentials(
+        client_id=os.environ.get("SPOTIPY_CLIENT_ID"),
+        client_secret=os.environ.get("SPOTIPY_CLIENT_SECRET"),
+        redirect_uri=os.environ.get("SPOTIPY_REDIRECT_URI"),
+        refresh_token=os.environ.get("SPOTIPY_REFRESH_TOKEN"),
+    )
 
+    read_from_env_success = True
+    for key, val in creds.__dict__.keys():
+        if not val:
+            logging.info(f"Could not read env variable for {key}")
+            read_from_env_success = False
+
+    if read_from_env_success:
         logging.info("Using credentials from environment.")
         return creds
 
