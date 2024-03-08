@@ -6,13 +6,20 @@ from spotify_objects import SpotifyPlaylist, SpotifyTrack
 import random
 import yaml
 import os
+import sys
+import logging
 
 def setup_credentials(cred_file=".spotipy-cred.yml"):
-    with open(cred_file) as cred_file:
-            creds = yaml.safe_load(cred_file)
-            for k, v in creds.items():
-                os.environ[k] = v
-    return creds
+    if os.environ.get("SPOTIPY_CLIENT_ID") and os.environ.get("SPOTIPY_CLIENT_SECRET") and os.environ.get("SPOTIPY_REDIRECT_URI"):
+            return
+
+    if os.path.exists(cred_file):
+        with open(cred_file) as cred_file:
+                creds = yaml.safe_load(cred_file)
+                for k, v in creds.items():
+                    os.environ[k] = v
+    else:
+        raise FileNotFoundError(f"Couldn't find {cred_file}.")
 
 def gather_playlist_tracks(
     spotify_client: Spotify, list_id: str, *, lim: int = 100, max_iterations: int = 100
@@ -60,13 +67,11 @@ def delete_song_from_personal_playlist(
     #     spotipy.playlist_remove_all_occurrences_of_items(playlist_id, items, snapshot_id=None)
     artists = [artist for artist in track.artist]
     artists_str = ", ".join(artists)
-    print(f"Song {track.name} by {artists_str} will be deleted.")
+    logging.info(f"Song {track.name} by {artists_str} will be deleted.")
     if not dangerrun:
-        print("Dry-run\n")
-        print()
+        logging.info("Dry-run. Skip deletion.\n\n")
     else:
         spotify_client.playlist_remove_all_occurrences_of_items(playlist_id, [track.id])
-        print()
     pass
 
 
@@ -113,7 +118,7 @@ def handle_songs(
             # and continue loop
             n_occurrences = find_song_in_personal_playlist(track, personal_songs)
             if n_occurrences:
-                print(
+                logging.info(
                     f"Song {track.name} is present in {n_occurrences} other playlists."
                 )
                 delete_song_from_personal_playlist(spotify_client, track, todo_list_id, dangerrun=dangerrun)
@@ -126,7 +131,7 @@ def handle_songs(
         if delta.days > PHASE_THREE_TIME_DAYS:
             # delete song from todo playlist
             # and continue loop w/ next track
-            print(f"Found old song: {track.name} by {track.artist}.")
+            logging.info(f"Found old song: {track.name} by {track.artist}.")
             delete_song_from_personal_playlist(spotify_client, track, todo_list_id, dangerrun=False)
             continue
 
@@ -153,5 +158,4 @@ def insert_random_insult():
         "insufferable oaf",
         "blithering idiot",
     ]
-
     return random.choice(insults)

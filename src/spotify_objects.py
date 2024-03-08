@@ -1,6 +1,7 @@
 import datetime
 from typing import Dict, List, Union
 from spotipy import Spotify
+import logging
 
 
 class SpotifyObject:
@@ -37,10 +38,10 @@ class SpotifyTrack(SpotifyObject):
         if added_by:
             self.added_by = added_by["id"]
             if "user" not in added_by["type"]:
-                print("WARNING! Found song added by non user type!")
-                print(f"Song: {name} by artist(s) {self.artist_names}")
-                print(f"Was added by {self.added_by} of user-type {added_by['type']}")
-                print()
+                logging.warning("WARNING! Found song added by non user type!")
+                logging.warning(f"Song: {name} by artist(s) {self.artist_names}")
+                logging.warning(f"Was added by {self.added_by} of user-type {added_by['type']}")
+                logging.warning()
             self.added_by_type = added_by["type"]
 
     def save_artist_genre(self, spotify_client: Spotify):
