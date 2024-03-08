@@ -3,6 +3,7 @@ import datetime
 import logging
 import os
 import random
+import time
 from typing import Dict, List, Union
 
 import requests
@@ -137,7 +138,7 @@ def delete_song_from_personal_playlist(
         logging.info("Dry-run. Skip deletion.\n\n")
     else:
         spotify_client.playlist_remove_all_occurrences_of_items(playlist_id, [track.id])
-    pass
+        time.sleep(0.5)
 
 
 def find_song_in_personal_playlist(
@@ -199,6 +200,7 @@ def handle_songs(
             delete_song_from_personal_playlist(
                 spotify_client, track, todo_list_id, dangerrun=dangerrun
             )
+            logging.info("")
             continue
 
         if delta.days > PHASE_TWO_TIME_DAYS:
