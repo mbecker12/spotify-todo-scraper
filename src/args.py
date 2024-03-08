@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument(
         "-l",
         "--loglevel",
-        default="DEBUG",
+        default="INFO",
         help="controls verbosity - DEBUG/INFO/WARNING/ERROR/CRITICAL",
     )
     args = parser.parse_args()
