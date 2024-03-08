@@ -11,8 +11,9 @@ import logging
 
 def setup_credentials(cred_file=".spotipy-cred.yml"):
     if os.environ.get("SPOTIPY_CLIENT_ID") and os.environ.get("SPOTIPY_CLIENT_SECRET") and os.environ.get("SPOTIPY_REDIRECT_URI"):
-            return
-
+        logging.info("Using credentials from environment.")
+        return
+    logging.info(f'{os.environ.get("SPOTIPY_CLIENT_ID")=}')
     if os.path.exists(cred_file):
         with open(cred_file) as cred_file:
                 creds = yaml.safe_load(cred_file)
