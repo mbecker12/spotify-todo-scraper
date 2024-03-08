@@ -21,11 +21,11 @@ def main():
     sp = login_to_spotify()
 
     # according to https://stackoverflow.com/questions/51442226/spotipy-user-playlist-remove-tracks-issue
-    token = spotipy.util.prompt_for_user_token(
-        "cracky109",
-        scope="playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative",
-    )
-    sp = spotipy.Spotify(auth=token)
+    # token = spotipy.util.prompt_for_user_token(
+    #     "cracky109",
+    #     scope="playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative",
+    # )
+    # sp = spotipy.Spotify(auth=token)
 
     playlist_tracks = gather_playlist_tracks(sp, list_todo.id)
     todo_tracks = filter_tracks(playlist_tracks)

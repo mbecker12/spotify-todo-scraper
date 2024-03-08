@@ -62,9 +62,11 @@ def refresh_access_token(creds: SpotifyCredentials) -> str:
             (creds.client_id + ":" + creds.client_secret).encode()
         ).decode()
     }
+    print("posting...")
     response = requests.post(
         "https://accounts.spotify.com/api/token", data=payload, headers=auth_header
     )
+    print(response)
     return response.json().get("access_token")
 
 
@@ -73,6 +75,7 @@ def login_to_spotify():
     new_access_token = refresh_access_token(creds)
 
     # Set up Spotipy
+    print("Setting up Spotify object")
     sp = Spotify(auth=new_access_token)
     return sp
 
@@ -80,6 +83,7 @@ def login_to_spotify():
 def gather_playlist_tracks(
     spotify_client: Spotify, list_id: str, *, lim: int = 100, max_iterations: int = 100
 ) -> List:
+    logging.debug("Gathering playlist tracks...")
     playlist_tracks = []
     for i in range(max_iterations):
         pl_tr = spotify_client.playlist_tracks(
@@ -96,6 +100,7 @@ def filter_tracks(
     playlist_tracks: List, *, spotify_client: Union[Spotify, None] = None
 ) -> List[SpotifyTrack]:
 
+    logging.debug("Filtering tracks...")
     all_tracks = []
 
     for group in playlist_tracks:
