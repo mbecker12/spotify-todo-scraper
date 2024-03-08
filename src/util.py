@@ -10,7 +10,12 @@ import requests
 import yaml
 from spotipy import Spotify
 
-from definitions import PHASE_ONE_TIME_DAYS, PHASE_THREE_TIME_DAYS, PHASE_TWO_TIME_DAYS
+from definitions import (
+    PHASE_ONE_TIME_DAYS,
+    PHASE_THREE_TIME_DAYS,
+    PHASE_TWO_TIME_DAYS,
+    WHITELIST_SONGS,
+)
 from spotify_objects import SpotifyCredentials, SpotifyPlaylist, SpotifyTrack
 
 
@@ -130,7 +135,6 @@ def delete_song_from_personal_playlist(
     *,
     dangerrun: bool = False,
 ):
-    #     spotipy.playlist_remove_all_occurrences_of_items(playlist_id, items, snapshot_id=None)
     artists = [artist for artist in track.artist]
     artists_str = ", ".join(artists)
     logging.info(f"Song '{track.name}' by '{artists_str}' will be deleted.")
@@ -151,7 +155,7 @@ def find_song_in_personal_playlist(
     for key, songs in personal_songs.items():
         for song in songs:
             if not song or not song.id:
-                if song.name == "Slipshod":
+                if song.name in WHITELIST_SONGS:
                     continue
                 song.printf()
                 raise Exception(

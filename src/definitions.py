@@ -19,6 +19,8 @@ REMOVE_GENRES = [
     "discofox",
 ]
 
+WHITELIST_SONGS = ["Slipshod"]
+
 from spotify_objects import SpotifyPlaylist
 
 list_todo = SpotifyPlaylist("5f1XnFPwdmCERgXQCanZeq", "#TODO:")
