@@ -22,7 +22,7 @@ def setup_credentials(cred_file=".spotipy-cred.yml") -> SpotifyCredentials:
     )
 
     read_from_env_success = True
-    for key, val in creds.__dict__.keys():
+    for key, val in creds.__dict__.items():
         if not val:
             logging.info(f"Could not read env variable for {key}")
             read_from_env_success = False
