@@ -75,7 +75,7 @@ def login_to_spotify():
     new_access_token = refresh_access_token(creds)
 
     # Set up Spotipy
-    print("Setting up Spotify object")
+    logging.debug("Setting up Spotify object")
     sp = Spotify(auth=new_access_token)
     return sp
 
@@ -174,6 +174,8 @@ def handle_songs(
     If a song from the TODO list is already present in any
     of the personal playlists, remove it from the TODO list.
     """
+    logging.debug("Handling songs...")
+    logging.info("\n")
     now = datetime.datetime.now()
     for track in todo_tracks:
         delta = now - track.added
@@ -193,7 +195,9 @@ def handle_songs(
 
         if delta.days > PHASE_TWO_TIME_DAYS:
             # Send notification to review songs
-            pass
+            logging.info(f"Found stale song: {track.name} by {track.artist}.")
+            logging.info("Move the song to another playlist or remove the song.")
+            logging.info("The song will be auto-removed in the next phase.")
 
         if delta.days > PHASE_THREE_TIME_DAYS:
             # delete song from todo playlist
