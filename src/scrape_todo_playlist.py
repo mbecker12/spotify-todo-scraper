@@ -1,32 +1,33 @@
-from unittest import result
-import spotipy
-import sys
-import os
-from spotipy.oauth2 import SpotifyClientCredentials
-from definitions import personal_lists, list_todo
-from util import (
-    gather_playlist_tracks,
-    filter_tracks,
-    prepare_personal_songs,
-    handle_songs,
-    setup_credentials
-)
 import logging
+import os
+import sys
+from unittest import result
+
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
+
 from args import parse_args
+from definitions import list_todo, personal_lists
+from util import (
+    filter_tracks,
+    gather_playlist_tracks,
+    handle_songs,
+    login_to_spotify,
+    prepare_personal_songs,
+    setup_credentials,
+)
+
 
 def main():
     args = parse_args()
     dangerrun = args.danger_run
 
-    setup_credentials()
-
-    client_credentials_manager = SpotifyClientCredentials()
-    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager, auth_manager=client_credentials_manager)
+    sp = login_to_spotify()
 
     # according to https://stackoverflow.com/questions/51442226/spotipy-user-playlist-remove-tracks-issue
     token = spotipy.util.prompt_for_user_token(
         "cracky109",
-        scope="playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative"
+        scope="playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative",
     )
     sp = spotipy.Spotify(auth=token)
 

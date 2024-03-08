@@ -1,13 +1,15 @@
 import argparse
 import logging
 
+
 def parse_args():
     def set_logging_level(loglevel: str):
         numeric_level = getattr(logging, loglevel.upper(), None)
         logging.getLogger().setLevel(numeric_level)
         logging.basicConfig(
-            format='%(asctime)s %(levelname)-8s %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S')
+            format="%(asctime)s %(levelname)-8s %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
 
     parser = argparse.ArgumentParser()
     parser.add_argument(

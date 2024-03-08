@@ -1,18 +1,20 @@
+import argparse
 import os
-import spotipy
 import sys
+
+import spotipy
 import yaml
 from spotipy.oauth2 import SpotifyClientCredentials
-from definitions import personal_lists, TOLERATE_USERS, REMOVE_GENRES, TOLERATE_GENRES
+
+from definitions import REMOVE_GENRES, TOLERATE_GENRES, TOLERATE_USERS, personal_lists
 from util import (
     delete_song_from_personal_playlist,
-    gather_playlist_tracks,
     filter_tracks,
+    gather_playlist_tracks,
     insert_random_insult,
-    setup_credentials
+    setup_credentials,
 )
 
-import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--dry-run",
@@ -25,6 +27,7 @@ parser.add_argument(
     action="store_true",
 )
 
+
 def main():
     args = parser.parse_args()
     dangerrun = args.danger_run
@@ -33,13 +36,13 @@ def main():
 
     if not os.environ.get("SPOTIPY_CLIENT_ID"):
         setup_credentials()
-    
+
     client_credentials_manager = SpotifyClientCredentials()
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
     token = spotipy.util.prompt_for_user_token(
-        "cracky109", 
-        scope="playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative"
+        "cracky109",
+        scope="playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative",
     )
     sp = spotipy.Spotify(auth=token)
 
@@ -60,8 +63,9 @@ def main():
                 )
                 print()
 
-                delete_song_from_personal_playlist(sp, track, playlist.id, dangerrun=dangerrun)
-
+                delete_song_from_personal_playlist(
+                    sp, track, playlist.id, dangerrun=dangerrun
+                )
 
             for genre in track.genres:
                 for allowed_genre in TOLERATE_GENRES:
@@ -82,8 +86,10 @@ def main():
                 genres_str = ", ".join([genre for genre in track.genres])
                 print(f"Detected sacrilegious song from genre {genres_str},")
                 print(f"added by the {insert_random_insult()} {track.added_by}:")
-                delete_song_from_personal_playlist(sp, track, playlist.id, dangerrun=dangerrun)
-                
+                delete_song_from_personal_playlist(
+                    sp, track, playlist.id, dangerrun=dangerrun
+                )
+
     return 0
 
 

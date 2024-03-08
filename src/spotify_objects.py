@@ -1,7 +1,9 @@
 import datetime
-from typing import Dict, List, Union
-from spotipy import Spotify
 import logging
+from dataclasses import dataclass
+from typing import Dict, List, Union
+
+from spotipy import Spotify
 
 
 class SpotifyObject:
@@ -40,7 +42,9 @@ class SpotifyTrack(SpotifyObject):
             if "user" not in added_by["type"]:
                 logging.warning("WARNING! Found song added by non user type!")
                 logging.warning(f"Song: {name} by artist(s) {self.artist_names}")
-                logging.warning(f"Was added by {self.added_by} of user-type {added_by['type']}")
+                logging.warning(
+                    f"Was added by {self.added_by} of user-type {added_by['type']}"
+                )
                 logging.warning()
             self.added_by_type = added_by["type"]
 
@@ -56,3 +60,11 @@ class SpotifyTrack(SpotifyObject):
 
     def printf(self):
         super().printf()
+
+
+@dataclass
+class SpotifyCredentials:
+    client_id: str
+    client_secret: str
+    redirect_uri: str
+    refresh_token: str = None

@@ -1,26 +1,81 @@
+import base64
 import datetime
-from definitions import PHASE_ONE_TIME_DAYS, PHASE_TWO_TIME_DAYS, PHASE_THREE_TIME_DAYS
-from typing import List, Dict, Union
-from spotipy import Spotify
-from spotify_objects import SpotifyPlaylist, SpotifyTrack
-import random
-import yaml
-import os
-import sys
 import logging
+import os
+import random
+import sys
+from typing import Dict, List, Union
 
-def setup_credentials(cred_file=".spotipy-cred.yml"):
-    if os.environ.get("SPOTIPY_CLIENT_ID") and os.environ.get("SPOTIPY_CLIENT_SECRET") and os.environ.get("SPOTIPY_REDIRECT_URI"):
+import requests
+import yaml
+from spotipy import Spotify
+
+from definitions import PHASE_ONE_TIME_DAYS, PHASE_THREE_TIME_DAYS, PHASE_TWO_TIME_DAYS
+from spotify_objects import SpotifyCredentials, SpotifyPlaylist, SpotifyTrack
+
+
+def setup_credentials(cred_file=".spotipy-cred.yml") -> SpotifyCredentials:
+    if (
+        os.environ.get("SPOTIPY_CLIENT_ID")
+        and os.environ.get("SPOTIPY_CLIENT_SECRET")
+        and os.environ.get("SPOTIPY_REDIRECT_URI")
+        and os.environ.get("SPOTIPY_REFRESH_TOKEN")
+    ):
+        creds = SpotifyCredentials(
+            client_id=os.environ.get("SPOTIPY_CLIENT_ID"),
+            client_secret=os.environ.get("SPOTIPY_CLIENT_SECRET"),
+            redirect_uri=os.environ.get("SPOTIPY_REDIRECT_URI"),
+            refresh_token=os.environ.get("SPOTIPY_REFRESH_TOKEN"),
+        )
+
         logging.info("Using credentials from environment.")
-        return
-    logging.info(f'{os.environ.get("SPOTIPY_CLIENT_ID")=}')
+        return creds
+
+    logging.info("Couldn't find environment variables.")
+    logging.info(f"Attempting to read credentials from file {cred_file}.")
+
     if os.path.exists(cred_file):
         with open(cred_file) as cred_file:
-                creds = yaml.safe_load(cred_file)
-                for k, v in creds.items():
-                    os.environ[k] = v
+            _creds = yaml.safe_load(cred_file)
+            for k, v in _creds.items():
+                os.environ[k] = v
+
+        creds = SpotifyCredentials(
+            client_id=os.environ.get("SPOTIPY_CLIENT_ID"),
+            client_secret=os.environ.get("SPOTIPY_CLIENT_SECRET"),
+            redirect_uri=os.environ.get("SPOTIPY_REDIRECT_URI"),
+            refresh_token=os.environ.get("SPOTIPY_REFRESH_TOKEN"),
+        )
+        return creds
     else:
         raise FileNotFoundError(f"Couldn't find {cred_file}.")
+
+
+def refresh_access_token(creds: SpotifyCredentials) -> str:
+    payload = {
+        "grant_type": "refresh_token",
+        "refresh_token": creds.refresh_token,
+    }
+    auth_header = {
+        "Authorization": "Basic "
+        + base64.b64encode(
+            (creds.client_id + ":" + creds.client_secret).encode()
+        ).decode()
+    }
+    response = requests.post(
+        "https://accounts.spotify.com/api/token", data=payload, headers=auth_header
+    )
+    return response.json().get("access_token")
+
+
+def login_to_spotify():
+    creds = setup_credentials()
+    new_access_token = refresh_access_token(creds)
+
+    # Set up Spotipy
+    sp = Spotify(auth=new_access_token)
+    return sp
+
 
 def gather_playlist_tracks(
     spotify_client: Spotify, list_id: str, *, lim: int = 100, max_iterations: int = 100
@@ -63,7 +118,11 @@ def filter_tracks(
 
 
 def delete_song_from_personal_playlist(
-    spotify_client: Spotify, track: SpotifyTrack, playlist_id: str, *, dangerrun: bool = False
+    spotify_client: Spotify,
+    track: SpotifyTrack,
+    playlist_id: str,
+    *,
+    dangerrun: bool = False,
 ):
     #     spotipy.playlist_remove_all_occurrences_of_items(playlist_id, items, snapshot_id=None)
     artists = [artist for artist in track.artist]
@@ -104,7 +163,7 @@ def handle_songs(
     todo_tracks: List[SpotifyTrack],
     personal_songs: Dict[str, List[SpotifyTrack]],
     todo_list_id: str,
-    dangerrun: bool = False
+    dangerrun: bool = False,
 ):
     """
     If a song from the TODO list is already present in any
@@ -122,7 +181,9 @@ def handle_songs(
                 logging.info(
                     f"Song {track.name} is present in {n_occurrences} other playlists."
                 )
-                delete_song_from_personal_playlist(spotify_client, track, todo_list_id, dangerrun=dangerrun)
+                delete_song_from_personal_playlist(
+                    spotify_client, track, todo_list_id, dangerrun=dangerrun
+                )
                 continue
 
         if delta.days > PHASE_TWO_TIME_DAYS:
@@ -133,7 +194,9 @@ def handle_songs(
             # delete song from todo playlist
             # and continue loop w/ next track
             logging.info(f"Found old song: {track.name} by {track.artist}.")
-            delete_song_from_personal_playlist(spotify_client, track, todo_list_id, dangerrun=False)
+            delete_song_from_personal_playlist(
+                spotify_client, track, todo_list_id, dangerrun=False
+            )
             continue
 
 
