@@ -181,8 +181,7 @@ def handle_songs(
         delta = now - track.added
         if delta.days >= PHASE_ONE_TIME_DAYS:
             # check if song is present in personal playlist
-            # if so: delete from todo
-            # and continue loop
+            # if so: delete from todo and continue loop
             n_occurrences = find_song_in_personal_playlist(track, personal_songs)
             if n_occurrences:
                 logging.info(
@@ -193,20 +192,20 @@ def handle_songs(
                 )
                 continue
 
-        if delta.days > PHASE_TWO_TIME_DAYS:
-            # Send notification to review songs
-            logging.info(f"Found stale song: {track.name} by {track.artist}.")
-            logging.info("Move the song to another playlist or remove the song.")
-            logging.info("The song will be auto-removed in the next phase.")
-
         if delta.days > PHASE_THREE_TIME_DAYS:
             # delete song from todo playlist
             # and continue loop w/ next track
             logging.info(f"Found old song: {track.name} by {track.artist}.")
             delete_song_from_personal_playlist(
-                spotify_client, track, todo_list_id, dangerrun=False
+                spotify_client, track, todo_list_id, dangerrun=dangerrun
             )
             continue
+
+        if delta.days > PHASE_TWO_TIME_DAYS:
+            # Send notification to review songs
+            logging.info(f"Found stale song: {track.name} by {track.artist}.")
+            logging.info("Move the song to another playlist or remove the song.")
+            logging.info("The song will be auto-removed in the next phase.")
 
 
 def prepare_personal_songs(
