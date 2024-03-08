@@ -127,7 +127,7 @@ def delete_song_from_personal_playlist(
     #     spotipy.playlist_remove_all_occurrences_of_items(playlist_id, items, snapshot_id=None)
     artists = [artist for artist in track.artist]
     artists_str = ", ".join(artists)
-    logging.info(f"Song {track.name} by {artists_str} will be deleted.")
+    logging.info(f"Song '{track.name}' by '{artists_str}' will be deleted.")
     if not dangerrun:
         logging.info("Dry-run. Skip deletion.\n\n")
     else:
