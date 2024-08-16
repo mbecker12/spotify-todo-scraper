@@ -211,7 +211,7 @@ def handle_songs(
             # Send notification to review songs
             logging.info(f"Found stale song: {track.name} by {track.artist}.")
             logging.info("Move the song to another playlist or remove the song.")
-            logging.info("The song will be auto-removed in the next phase.")
+            logging.info("The song will be auto-removed in the next phase.\n")
 
 
 def prepare_personal_songs(
