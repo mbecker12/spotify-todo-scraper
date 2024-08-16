@@ -1,6 +1,6 @@
-PHASE_ONE_TIME_DAYS = 14
-PHASE_TWO_TIME_DAYS = 30
-PHASE_THREE_TIME_DAYS = 90
+PHASE_ONE_TIME_DAYS = 28
+PHASE_TWO_TIME_DAYS = 60
+PHASE_THREE_TIME_DAYS = 120
 
 TOLERATE_USERS = ["cracky109", "mamelmamel5", "daisys"]
 TOLERATE_GENRES = ["metal", "prog", "alternative"]
@@ -32,5 +32,6 @@ list_prog = SpotifyPlaylist(
 list_soul = SpotifyPlaylist("5ZQwxZ3pIPoVkyYIQDJwiZ", "Soulstice")
 list_u2 = SpotifyPlaylist("5QJ2cW7xHcHNJEjuwyfZYw", "u2")
 list_swe = SpotifyPlaylist("2Ita6z3IthLSW54M33V1tu", "sverige")
+list_44 = SpotifyPlaylist("4BvCBgCnIitegiChZ2JDfY", "44")
 
-personal_lists = [list_42, list_43, list_prog, list_soul, list_u2, list_swe]
+personal_lists = [list_42, list_43, list_prog, list_soul, list_u2, list_swe, list_44]
