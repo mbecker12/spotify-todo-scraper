@@ -195,6 +195,7 @@ def handle_songs(
                 delete_song_from_personal_playlist(
                     spotify_client, track, todo_list_id, dangerrun=dangerrun
                 )
+                logging.info("")
                 continue
 
         if delta.days > PHASE_THREE_TIME_DAYS:
