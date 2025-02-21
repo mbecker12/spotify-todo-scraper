@@ -33,5 +33,7 @@ list_soul = SpotifyPlaylist("5ZQwxZ3pIPoVkyYIQDJwiZ", "Soulstice")
 list_u2 = SpotifyPlaylist("5QJ2cW7xHcHNJEjuwyfZYw", "u2")
 list_swe = SpotifyPlaylist("2Ita6z3IthLSW54M33V1tu", "sverige")
 list_44 = SpotifyPlaylist("4BvCBgCnIitegiChZ2JDfY", "44")
+list_heavy_stuff = SpotifyPlaylist("2hCHnKPepBWePTTSmHAa3E", "heavy stuff")
+list_good_stuff = SpotifyPlaylist("76yHl3Rtk51I5NxNPJVoHx", "good stuff")
 
-personal_lists = [list_42, list_43, list_prog, list_soul, list_u2, list_swe, list_44]
+personal_lists = [list_42, list_43, list_prog, list_soul, list_u2, list_swe, list_44, list_good_stuff, list_heavy_stuff]
